@@ -4,12 +4,11 @@ const mongoose = require('mongoose');
 const { v4: uuidv4 } = require("uuid")
 const bcrypt = require('bcrypt');
 const jwt=require('jsonwebtoken');
-const authMiddleWare =require("./middlewares/auth");
 const app = express();
 const cors=require('cors');
+const authMiddleWare=require('./middlewares/auth.js');
 app.use(express.json());
 app.use(cors());
-
 
 mongoose.connect(
     "mongodb+srv://shobii1808:shobi@cluster0.qt0yggf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
@@ -45,7 +44,7 @@ const User = mongoose.model('User', userSchema);
 
 
 app.post("/signup", async(req,res)=>{
-    const {id, name, email, password, age, phone, genres, dob, gender} = req.body;
+    const {id, name, email, password, age, phone,dob, gender} = req.body;
     try{
         const user = await User.findOne({ email });
         if(user){
@@ -54,7 +53,7 @@ app.post("/signup", async(req,res)=>{
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
-            id, name, email, password: hashedPassword, age, phone, genres, dob, gender
+            id, name, email, password: hashedPassword, age, phone,dob, gender
         });
         console.log(newUser);
         await newUser.save();
@@ -76,7 +75,7 @@ app.post('/signin',async(req,res)=>{
         if(!isValidPassword){
             return res.status(400).json({message:"Invalid password"})
         }
-        const token=jwt.sign({id:user.id},"secretkey",{expiresIn:"1h"})
+        const token=jwt.sign({id:user.id},"secret_key",{expiresIn:"1h"})
         res.status(200).json(token);
     }
     catch(error){
@@ -94,12 +93,12 @@ app.get('/api/user', authMiddleWare,async (req, res) => {
         res.status(500).json({ message: 'Error retrieving user', error: err });
     }
 });
-app.get("/api/books",authMiddleWare,async(req,res)=>{
+app.get('/api/books',authMiddleWare,async(req,res)=>{
     try{
     const books=await Book.find();
-    res.status(200).json(books)    }
+    res.json(books)    }
     catch(err){
-        res.status(500).json({message:err.message})
+        res.json({message:err.message})
     }
 })
 app.get('/api/books/:id', authMiddleWare,async (req, res) => {
