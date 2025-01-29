@@ -36,7 +36,8 @@ const bookSchema = new mongoose.Schema({
     category: { type: String, required: true },
     publishedYear: { type: Number, required: true },
     description: { type: String },
-    status: { type: String }
+    status: { type: String },
+    image: { type: String }
 });
 
 const Book = mongoose.model('Book', bookSchema);
@@ -48,6 +49,7 @@ app.post("/signup", async(req,res)=>{
     try{
         const user = await User.findOne({ email });
         if(user){
+
             return res.status(400).json({message: 'Email already exists'})
         }
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -106,7 +108,7 @@ app.get('/api/user', authMiddlewar,async (req, res) => {
         res.status(500).json({ message: 'Error retrieving user', error: err });
     }
 });
-app.get("/api/books",async(req,res)=>{
+app.get("/api/books",authMiddlewar,async(req,res)=>{
     try{
     const books=await Book.find();
     res.status(200).json(books)    }
@@ -127,7 +129,7 @@ app.get('/api/books/:id', authMiddlewar,async (req, res) => {
 });
 
 
-app.post('/api/books', async (req, res) => {
+app.post('/api/books',authMiddlewar, async (req, res) => {
     console.log(req.body)
     const { title, author, category, publishedYear, description, status } = req.body;
     try {
@@ -138,7 +140,7 @@ app.post('/api/books', async (req, res) => {
             category,
             publishedYear,
             description,
-            status
+            status,image
         });
         const savedBook = await newBook.save();
         res.status(201).json(savedBook);
@@ -148,7 +150,7 @@ app.post('/api/books', async (req, res) => {
 });
 
 
-app.put('/api/books/:id', async (req, res) => {
+app.put('/api/books/:id', authMiddlewar,async (req, res) => {
     const { id } = req.params;
     const { title, author, category, publishedYear, description, status } = req.body;
     try {
@@ -163,7 +165,7 @@ app.put('/api/books/:id', async (req, res) => {
 });
 
 
-app.delete('/api/books/:id', async (req, res) => {
+app.delete('/api/books/:id', authMiddlewar,async (req, res) => {
     try {
         const id = req.params;
         const deletedBook = await Book.deleteOne(id);
