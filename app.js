@@ -96,6 +96,7 @@ app.get('/api/user', authMiddleWare,async (req, res) => {
 app.get('/api/books',authMiddleWare,async(req,res)=>{
     try{
     const books=await Book.find();
+    console.log(books);
     res.json(books)    }
     catch(err){
         res.json({message:err.message})
