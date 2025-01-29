@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt=require('jsonwebtoken');
 const authMiddlewar =require("./middlewares/auth");
 const app = express();
+const cors=require('cors');
 app.use(express.json());
 app.use(cors());
 
