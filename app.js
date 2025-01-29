@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const { v4: uuidv4 } = require("uuid")
 const bcrypt = require('bcrypt');
 const jwt=require('jsonwebtoken');
-const authMiddlewar =require("./middlewares/auth");
+const authMiddleWare =require("./middlewares/auth");
 const app = express();
 const cors=require('cors');
 app.use(express.json());
@@ -65,20 +65,6 @@ app.post("/signup", async(req,res)=>{
         res.status(500).json({message: "Internal server error"})
     }
 });
-// app.post('/signup', async (req, res) => {
-//     const {id,Name,email,password,age,phone,genres,dob,gender}=req.body;
-//     try {
-//         const users = await Book.findOne({id});
-//         res.status(200).json(users);
-//         const hashpassword = await bcrypt.hash(password, 10);
-//         const newUser=new User({id,Name,email,password:hashpassword,age,phone,genres,dob,gender})
-//         await newUser.save();
-//         res.json({message:"User created successfully"});
-//     } catch (err) {
-//         console.log(err);
-//         res.status(500).json({ message: 'Error retrieving books', error: err });
-//     }
-// });
 app.post('/signin',async(req,res)=>{
     const{email,password}=req.body;
     try{
@@ -97,7 +83,7 @@ app.post('/signin',async(req,res)=>{
         res.status(500).json({message:"Error signing in",error});
     }
 })
-app.get('/api/user', authMiddlewar,async (req, res) => {
+app.get('/api/user', authMiddleWare,async (req, res) => {
     try {
         const user = await User.findOneById(req.params.id);
         if (!user) {
@@ -108,7 +94,7 @@ app.get('/api/user', authMiddlewar,async (req, res) => {
         res.status(500).json({ message: 'Error retrieving user', error: err });
     }
 });
-app.get("/api/books",authMiddlewar,async(req,res)=>{
+app.get("/api/books",authMiddleWare,async(req,res)=>{
     try{
     const books=await Book.find();
     res.status(200).json(books)    }
@@ -116,7 +102,7 @@ app.get("/api/books",authMiddlewar,async(req,res)=>{
         res.status(500).json({message:err.message})
     }
 })
-app.get('/api/books/:id', authMiddlewar,async (req, res) => {
+app.get('/api/books/:id', authMiddleWare,async (req, res) => {
     try {
         const book = await Book.findOneById(req.params.id);
         if (!book) {
@@ -126,10 +112,9 @@ app.get('/api/books/:id', authMiddlewar,async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: 'Error retrieving book', error: err });
     }
-});
+}); 
 
-
-app.post('/api/books',authMiddlewar, async (req, res) => {
+app.post('/api/books',authMiddleWare, async (req, res) => {
     console.log(req.body)
     const { title, author, category, publishedYear, description, status } = req.body;
     try {
@@ -150,7 +135,7 @@ app.post('/api/books',authMiddlewar, async (req, res) => {
 });
 
 
-app.put('/api/books/:id', authMiddlewar,async (req, res) => {
+app.put('/api/books/:id', authMiddleWare,async (req, res) => {
     const { id } = req.params;
     const { title, author, category, publishedYear, description, status } = req.body;
     try {
@@ -165,7 +150,7 @@ app.put('/api/books/:id', authMiddlewar,async (req, res) => {
 });
 
 
-app.delete('/api/books/:id', authMiddlewar,async (req, res) => {
+app.delete('/api/books/:id', authMiddleWare,async (req, res) => {
     try {
         const id = req.params;
         const deletedBook = await Book.deleteOne(id);
