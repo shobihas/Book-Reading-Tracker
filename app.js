@@ -113,25 +113,25 @@ app.get('/api/books/:id', authMiddleWare,async (req, res) => {
     }
 }); 
 
-app.post('/api/books',authMiddleWare, async (req, res) => {
-    console.log(req.body)
-    const { title, author, category, publishedYear, description, status } = req.body;
+app.post('/api/books', authMiddleWare, async (req, res) => {
+    const { title, author, category, publishedYear, description, status, image } = req.body; // Add image here
     try {
-        const newBook = new Book({
-            id: uuidv4(),
-            title,
-            author,
-            category,
-            publishedYear,
-            description,
-            status,image
-        });
-        const savedBook = await newBook.save();
-        res.status(201).json(savedBook);
+      const newBook = new Book({
+        id: uuidv4(),
+        title,
+        author,
+        category,
+        publishedYear,
+        description,
+        status,
+        image, // Include image
+      });
+      const savedBook = await newBook.save();
+      res.status(201).json(savedBook);
     } catch (err) {
-        res.status(500).json({ message: 'Error adding book', error: err });
+      res.status(500).json({ message: 'Error adding book', error: err });
     }
-});
+  });
 
 
 app.put('/api/books/:id', authMiddleWare,async (req, res) => {
@@ -149,16 +149,16 @@ app.put('/api/books/:id', authMiddleWare,async (req, res) => {
 });
 
 
-app.delete('/api/books/:id', authMiddleWare,async (req, res) => {
+app.delete('/api/books/:id', authMiddleWare, async (req, res) => {
     try {
-        const id = req.params;
-        const deletedBook = await Book.deleteOne(id);
-        if (!deletedBook) return res.status(404).json({ message: 'Book not found' });
-        res.status(200).json({ message: 'Book deleted successfully' });
+      const { id } = req.params; // Extract id directly
+      const deletedBook = await Book.deleteOne({ id }); // Use { id }
+      if (!deletedBook.deletedCount) return res.status(404).json({ message: 'Book not found' });
+      res.status(200).json({ message: 'Book deleted successfully' });
     } catch (err) {
-        res.status(500).json({ message: 'Error deleting book', error: err });
+      res.status(500).json({ message: 'Error deleting book', error: err });
     }
-});
+  });
 app.listen(3000, () => {
     console.log("Server is running on Port 3000")
 })
